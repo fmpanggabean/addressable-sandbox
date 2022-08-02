@@ -14,6 +14,7 @@ public class AddressableManager : MonoBehaviour
 
     public TMP_Text msg;
     public TMP_Text log;
+    public TMP_InputField chatBox;
 
     public bool isClearCacheBeforeRun;
 
@@ -78,43 +79,25 @@ public class AddressableManager : MonoBehaviour
         msg.text = $"{value}";
     }
 
-    private void Update()
+    public async Task InstantiateAsset(string path)
+    {        
+        Vector3 randomPosition = new Vector3(
+            UnityEngine.Random.Range(-4, 4),
+            0,
+            UnityEngine.Random.Range(-4, 4)
+            );
+
+        AsyncOperationHandle<GameObject> asyncInstantiate;
+        asyncInstantiate  = Addressables.InstantiateAsync(path, randomPosition, Quaternion.identity);
+        await asyncInstantiate.Task;
+
+        Log($"{asyncInstantiate.Result.name} instantiated");
+    }
+
+    public async void CreateObject()
     {
-        if (Input.GetKeyDown(KeyCode.Alpha1))
-        {
-            Vector3 randomPosition = new Vector3(
-                UnityEngine.Random.Range(-4, 4),
-                0,
-                UnityEngine.Random.Range(-4, 4)
-                );
-            Addressables.InstantiateAsync("Assets/FreeDragons/Prefab/DragonBoarPBR/GoldBoarPBR.prefab", randomPosition, Quaternion.identity);
-        }
-        else if (Input.GetKeyDown(KeyCode.Alpha2))
-        {
-            Vector3 randomPosition = new Vector3(
-                UnityEngine.Random.Range(-4, 4),
-                0,
-                UnityEngine.Random.Range(-4, 4)
-                );
-            Addressables.InstantiateAsync("Assets/FreeDragons/Prefab/DragonBoarPBR/BlueBoarPBR.prefab", randomPosition, Quaternion.identity);
-        }
-        else if (Input.GetKeyDown(KeyCode.Alpha3))
-        {
-            Vector3 randomPosition = new Vector3(
-                UnityEngine.Random.Range(-4, 4),
-                0,
-                UnityEngine.Random.Range(-4, 4)
-                );
-            Addressables.InstantiateAsync("Assets/FreeDragons/Prefab/DragonBoarPBR/RedBoarPBR.prefab", randomPosition, Quaternion.identity);
-        }
-        else if (Input.GetKeyDown(KeyCode.Alpha4))
-        {
-            Vector3 randomPosition = new Vector3(
-                UnityEngine.Random.Range(-4, 4),
-                0,
-                UnityEngine.Random.Range(-4, 4)
-                );
-            Addressables.InstantiateAsync("Assets/FreeDragons/Prefab/DragonBoarPBR/GreenBoarPBR.prefab", randomPosition, Quaternion.identity);
-        }
+        await InstantiateAsset(chatBox.text);
+
+        chatBox.text = "";
     }
 }

@@ -45,6 +45,7 @@ MonoBehaviour:
   - {fileID: 11400000, guid: ecbd810ff1268894eacc07a7abe70c1e, type: 2}
   - {fileID: 11400000, guid: 4aafe293a8e04664d8219f7599ee6c17, type: 2}
   - {fileID: 11400000, guid: c4ab352c65b0ab946a59233a02807b11, type: 2}
+  - {fileID: 11400000, guid: 650dffed13fd5674293519a666233ea5, type: 2}
   m_BuildSettings:
     m_CompileScriptsInVirtualMode: 0
     m_CleanupStreamingAssetsAfterBuilds: 1
@@ -105,9 +106,9 @@ MonoBehaviour:
       - m_Id: 3809414605a6f704dbb909e7c488c75e
         m_Value: '{UnityEngine.AddressableAssets.Addressables.RuntimePath}/[BuildTarget]'
       - m_Id: 2744659f859f9b84d95d89b2a3c64232
-        m_Value: D:/Desktop/ServerData/[BuildTarget]
+        m_Value: D:/Desktop/Build/ServerData/[BuildTarget]
       - m_Id: 4138fc60a0eeb8b4b84a9da5cc8a3da3
-        m_Value: D:/Desktop/ServerData/[BuildTarget]
+        m_Value: D:/Desktop/Build/ServerData/[BuildTarget]
     m_ProfileEntryNames:
     - m_Id: 4d6dffffce7937046a375aca585b99c2
       m_Name: BuildTarget
@@ -141,7 +142,7 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 07b06f4a32861fd4daee51f33c7b1169, type: 2}
   - {fileID: 11400000, guid: fc1fc577871b0d846a418adc1efe09b2, type: 2}
   - {fileID: 11400000, guid: 58cd0df6d930dca4882212cedb79d6b1, type: 2}
-  m_ActiveProfileId: dcfd679aa1151fa47a168475ff05627f
+  m_ActiveProfileId: b05bec74cef18a040a2f00c3b0016be1
   m_HostingServicesManager:
     m_HostingServiceInfos:
     - classRef: UnityEditor.AddressableAssets.HostingServices.HttpHostingService,
@@ -158,7 +159,7 @@ MonoBehaviour:
           m_Key: HostingServiceUploadSpeed
         - m_AssemblyName: mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
           m_ClassName: System.String
-          m_Data: Library/com.unity.addressables/aa/Windows/StandaloneWindows64;D:/Desktop/ServerData/StandaloneWindows64
+          m_Data: Library/com.unity.addressables/aa/Windows/StandaloneWindows64;ServerData/StandaloneWindows64
           m_Key: ContentRoot
         - m_AssemblyName: mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
           m_ClassName: System.Boolean
