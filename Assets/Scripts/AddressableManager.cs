@@ -14,6 +14,7 @@ public class AddressableManager : MonoBehaviour
 
     public TMP_Text msg;
     public TMP_Text log;
+    public TMP_InputField chatBox;
 
     public bool isClearCacheBeforeRun;
 
@@ -76,6 +77,28 @@ public class AddressableManager : MonoBehaviour
     private void Message(string value)
     {
         msg.text = $"{value}";
+    }
+
+    public async Task InstantiateAsset(string path)
+    {        
+        Vector3 randomPosition = new Vector3(
+            UnityEngine.Random.Range(-4, 4),
+            0,
+            UnityEngine.Random.Range(-4, 4)
+            );
+
+        AsyncOperationHandle<GameObject> asyncInstantiate;
+        asyncInstantiate  = Addressables.InstantiateAsync(path, randomPosition, Quaternion.identity);
+        await asyncInstantiate.Task;
+
+        Log($"{asyncInstantiate.Result.name} instantiated");
+    }
+
+    public async void CreateObject()
+    {
+        await InstantiateAsset(chatBox.text);
+
+        chatBox.text = "";
     }
 
     private void Update()
