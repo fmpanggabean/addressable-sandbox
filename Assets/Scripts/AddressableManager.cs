@@ -100,44 +100,4 @@ public class AddressableManager : MonoBehaviour
 
         chatBox.text = "";
     }
-
-    private void Update()
-    {
-        if (Input.GetKeyDown(KeyCode.Alpha1))
-        {
-            Vector3 randomPosition = new Vector3(
-                UnityEngine.Random.Range(-4, 4),
-                0,
-                UnityEngine.Random.Range(-4, 4)
-                );
-            Addressables.InstantiateAsync("Assets/FreeDragons/Prefab/DragonBoarPBR/GoldBoarPBR.prefab", randomPosition, Quaternion.identity);
-        }
-        else if (Input.GetKeyDown(KeyCode.Alpha2))
-        {
-            Vector3 randomPosition = new Vector3(
-                UnityEngine.Random.Range(-4, 4),
-                0,
-                UnityEngine.Random.Range(-4, 4)
-                );
-            Addressables.InstantiateAsync("Assets/FreeDragons/Prefab/DragonBoarPBR/BlueBoarPBR.prefab", randomPosition, Quaternion.identity);
-        }
-        else if (Input.GetKeyDown(KeyCode.Alpha3))
-        {
-            Vector3 randomPosition = new Vector3(
-                UnityEngine.Random.Range(-4, 4),
-                0,
-                UnityEngine.Random.Range(-4, 4)
-                );
-            Addressables.InstantiateAsync("Assets/FreeDragons/Prefab/DragonBoarPBR/RedBoarPBR.prefab", randomPosition, Quaternion.identity);
-        }
-        else if (Input.GetKeyDown(KeyCode.Alpha4))
-        {
-            Vector3 randomPosition = new Vector3(
-                UnityEngine.Random.Range(-4, 4),
-                0,
-                UnityEngine.Random.Range(-4, 4)
-                );
-            Addressables.InstantiateAsync("Assets/FreeDragons/Prefab/DragonBoarPBR/GreenBoarPBR.prefab", randomPosition, Quaternion.identity);
-        }
-    }
 }
