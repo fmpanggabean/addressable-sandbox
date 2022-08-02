@@ -535,6 +535,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   msg: {fileID: 1671405129}
   log: {fileID: 178251891}
+  isClearCacheBeforeRun: 1
 --- !u!4 &1330523853
 Transform:
   m_ObjectHideFlags: 0

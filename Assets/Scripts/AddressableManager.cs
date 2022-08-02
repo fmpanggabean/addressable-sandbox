@@ -15,9 +15,14 @@ public class AddressableManager : MonoBehaviour
     public TMP_Text msg;
     public TMP_Text log;
 
+    public bool isClearCacheBeforeRun;
+
     private void Awake()
     {
-        ClearCache();
+        if (isClearCacheBeforeRun)
+        {
+            ClearCache();
+        }
 
         OnAwake();
     }
