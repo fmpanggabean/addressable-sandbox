@@ -53,7 +53,6 @@ public class AddressableManager : MonoBehaviour
         {
             Log($"Updating catalog");
             await UpdateCatalog(asyncCatalogCheck.Result);
-            Log($"Catalog update completed!");
         }
         else
         {
@@ -65,8 +64,18 @@ public class AddressableManager : MonoBehaviour
 
     private async Task UpdateCatalog(List<string> result)
     {
-        AsyncOperationHandle asyncUpdate = Addressables.UpdateCatalogs(result);
-        await asyncUpdate.Task;
+        AsyncOperationHandle asyncUpdate = Addressables.UpdateCatalogs(result, false);
+        //await asyncUpdate.Task;
+
+        while(asyncUpdate.PercentComplete < 1f)
+        {
+            Message($"Load {asyncUpdate.PercentComplete*100}%");
+            await Task.Yield();
+        }
+        Message($"Load {asyncUpdate.PercentComplete * 100}%");
+
+        Log($"Catalog update completed!");
+        Addressables.Release(asyncUpdate);
     }
 
     private void Log(string value)
@@ -89,7 +98,12 @@ public class AddressableManager : MonoBehaviour
 
         AsyncOperationHandle<GameObject> asyncInstantiate;
         asyncInstantiate  = Addressables.InstantiateAsync(path, randomPosition, Quaternion.identity);
-        await asyncInstantiate.Task;
+        //await asyncInstantiate.Task;
+        while (asyncInstantiate.PercentComplete < 1f)
+        {
+            Message($"Load {path} {asyncInstantiate.PercentComplete * 100}%");
+            await Task.Yield();
+        }
 
         Log($"{asyncInstantiate.Result.name} instantiated");
     }
