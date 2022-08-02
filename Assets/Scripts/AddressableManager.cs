@@ -37,29 +37,15 @@ public class AddressableManager : MonoBehaviour
     {
         asyncOperationHandle = Addressables.InitializeAsync(false);
         await asyncOperationHandle.Task;
-
-        float downloadSize = await GetDownloadSizeInKB();
     }
 
-    private async Task<float> GetDownloadSizeInKB()
+    private void Log(string value)
     {
-        long size = 0;
-
-        foreach (var key in asyncOperationHandle.Result.Keys)
-        {
-            AsyncOperationHandle<long> f = Addressables.GetDownloadSizeAsync(key);
-            await f.Task;
-            size += f.Result;
-        }
-
-        size /= 1024;
-        Log($"Download Size: {size} KB");
-
-        return size;
+        log.text += $"[{DateTime.Now.ToString("hh:mm:ss:ff")}] {value}\n";
     }
 
-    private void Log(string msg)
+    private void Message(string value)
     {
-        log.text += $"[{DateTime.Now.ToString("hh:mm:ss:ff")}] {msg}\n";
+        msg.text = $"{value}";
     }
 }
