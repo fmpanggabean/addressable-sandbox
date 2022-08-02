@@ -42,7 +42,18 @@ public class AddressableManager : MonoBehaviour
         await asyncCatalogCheck.Task;
 
         Log($"Catalog count: {asyncCatalogCheck.Result.Count}");
+        if (asyncCatalogCheck.Result.Count > 0)
+        {
+            await UpdateCatalog(asyncCatalogCheck.Result);
+        }
         Addressables.Release(asyncCatalogCheck);
+
+    }
+
+    private async Task UpdateCatalog(List<string> result)
+    {
+        AsyncOperationHandle asyncUpdate = Addressables.UpdateCatalogs(result);
+        await asyncUpdate.Task;
     }
 
     private void Log(string value)
