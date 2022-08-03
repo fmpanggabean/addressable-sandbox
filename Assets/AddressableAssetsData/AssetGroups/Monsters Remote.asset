@@ -33,17 +33,8 @@ MonoBehaviour:
     m_Address: Assets/SD Unity-Chan Haon Custom/Prefabs/Set/LS Preview SD Unity-chan.prefab
     m_ReadOnly: 0
     m_SerializedLabels: []
-  - m_GUID: 234a458d2bc9de040834a24c42610268
-    m_Address: Assets/SD Unity-Chan Haon Custom/Prefabs/Set/Set Costume_01 SD Unity-Chan.prefab
-    m_ReadOnly: 0
-    m_SerializedLabels: []
   - m_GUID: 0da59bd1f7117f84a8b59d383effdaef
     m_Address: Assets/SD Unity-Chan Haon Custom/Prefabs/Set/Set Costume_02 SD Misaki.prefab
-    m_ReadOnly: 0
-    m_SerializedLabels: []
-  - m_GUID: 485d662c63590f74dac20be0cf684019
-    m_Address: Assets/SD Unity-Chan Haon Custom/Prefabs/Set/Set Costume_02 SD Unity-Chan
-      WGS.prefab
     m_ReadOnly: 0
     m_SerializedLabels: []
   m_ReadOnly: 0

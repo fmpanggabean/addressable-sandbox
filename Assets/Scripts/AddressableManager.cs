@@ -39,10 +39,10 @@ public class AddressableManager : MonoBehaviour
         asyncOperationHandle = Addressables.InitializeAsync(false);
         await asyncOperationHandle.Task;
 
-        await UpdateCheck();
+        await CheckCatalogUpdate();
     }
 
-    private async Task UpdateCheck()
+    private async Task CheckCatalogUpdate()
     {
         AsyncOperationHandle<List<string>> asyncCatalogCheck = Addressables.CheckForCatalogUpdates(false);
         await asyncCatalogCheck.Task;
@@ -81,6 +81,7 @@ public class AddressableManager : MonoBehaviour
     private void Log(string value)
     {
         log.text += $"[{DateTime.Now.ToString("hh:mm:ss:ff")}] {value}\n";
+        Debug.Log($"[{DateTime.Now.ToString("hh:mm:ss:ff")}] {value}\n");
     }
 
     private void Message(string value)
