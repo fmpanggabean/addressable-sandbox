@@ -68,7 +68,7 @@ public partial class AddressableManager : MonoBehaviour
             }
         }
 
-        Log($"Download size: {size/1024f} KB. Type /update to download additional files.");
+        Log($"Download size: {size/1024f} KB. Type update to download additional files.");
     }
 
     private async Task DownloadDependencies()
@@ -99,16 +99,19 @@ public partial class AddressableManager : MonoBehaviour
 
 
 
-    public async Task InstantiateAsset(string key)
-    {        
+    public async void InstantiateObjectAtRandom(string key)
+    {
         Vector3 randomPosition = new Vector3(
             UnityEngine.Random.Range(-4, 4),
             0,
             UnityEngine.Random.Range(-4, 4)
             );
 
-        AsyncOperationHandle<GameObject> asyncInstantiate;
-        asyncInstantiate  = Addressables.InstantiateAsync(key, randomPosition, Quaternion.identity);
+        await InstantiateAsset(key, randomPosition, Quaternion.identity);
+    }
+    public async Task InstantiateAsset(string key, Vector3 position, Quaternion rotation)
+    { 
+        AsyncOperationHandle<GameObject> asyncInstantiate = Addressables.InstantiateAsync(key, position, rotation);
         await asyncInstantiate.Task;
 
         asyncGameObjectListInstantiated.Add(key, asyncInstantiate);
@@ -133,22 +136,19 @@ public partial class AddressableManager : MonoBehaviour
 
     public async void GetTextCommand()
     {
-        string input = chatBox.text;
+        var input = chatBox.text.Split("#");
 
-        if (input.Contains("/create "))
+        if (input[0].Equals("create"))
         {
-            input = input.Split("/create ")[1];
-            Log($"{input}");
-            await InstantiateAsset(input);
+            InstantiateObjectAtRandom(input[1]);
         } 
-        else if (input.Contains("/update"))
+        else if (input[0].Equals("update"))
         {
             await DownloadDependencies();
         } 
-        else if (input.Contains("/delete "))
+        else if (input[0].Equals("delete"))
         {
-            input = input.Split("/delete ")[1];
-            RemoveInstantiatedObject(input);
+            RemoveInstantiatedObject(input[1]);
         }
 
         chatBox.text = "";
