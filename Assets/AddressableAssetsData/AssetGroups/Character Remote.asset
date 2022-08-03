@@ -10,24 +10,24 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: bbb281ee3bf0b054c82ac2347e9e782c, type: 3}
-  m_Name: Monsters Local
+  m_Name: Character Remote
   m_EditorClassIdentifier: 
-  m_GroupName: Monsters Local
+  m_GroupName: Character Remote
   m_Data:
     m_SerializedData: []
-  m_GUID: 2bd61408b87b3fc4c8f8832b17b149c1
+  m_GUID: d74382c722ba25a4c97bc2ec8a9f0f68
   m_SerializeEntries:
-  - m_GUID: 907325ec940ecbf409d1505976f5fcd5
-    m_Address: Assets/FreeDragons/Prefab/DragonBoarPBR/BlueBoarPBR.prefab
+  - m_GUID: 234a458d2bc9de040834a24c42610268
+    m_Address: Assets/SD Unity-Chan Haon Custom/Prefabs/Set/Set Costume_01 SD Unity-Chan.prefab
     m_ReadOnly: 0
     m_SerializedLabels: []
-  - m_GUID: 36dd14b7ef773c54e96eb7d110c8b5ce
-    m_Address: Assets/FreeDragons/Prefab/DragonBoarPBR/GoldBoarPBR.prefab
+  - m_GUID: fdf678a7193c58346a367114b3da57ac
+    m_Address: Assets/SD Unity-Chan Haon Custom/Prefabs/Set/LS Preview SD Unity-chan.prefab
     m_ReadOnly: 0
     m_SerializedLabels: []
   m_ReadOnly: 0
   m_Settings: {fileID: 11400000, guid: 4b561c325a0cc2b4a983035e86042575, type: 2}
   m_SchemaSet:
     m_Schemas:
-    - {fileID: 11400000, guid: 3974ce99119e27f4987fe94f7744a8f8, type: 2}
-    - {fileID: 11400000, guid: 5455d71a7bd4f2742971c30f485e049b, type: 2}
+    - {fileID: 11400000, guid: 940387c80fcc5e246b11105953de10b0, type: 2}
+    - {fileID: 11400000, guid: cdb48662c6e48554e9a1d946f1b2704f, type: 2}

@@ -428,8 +428,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -409.03696, y: 38.273}
-  m_SizeDelta: {x: 384.1239, y: 469.4155}
+  m_AnchoredPosition: {x: 17.027985, y: 38.273}
+  m_SizeDelta: {x: 1236.3, y: 469.4155}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &550986984
 MonoBehaviour:
@@ -774,8 +774,8 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 963194225}
-  m_LocalRotation: {x: -0.1620253, y: 0.8325924, z: -0.42272925, w: -0.31912035}
-  m_LocalPosition: {x: 6.8744955, y: 13.849535, z: 7.4727244}
+  m_LocalRotation: {x: -0.10143394, y: 0.8969071, z: -0.33178392, w: -0.27420497}
+  m_LocalPosition: {x: 1.2819897, y: 2.3966722, z: 1.6544694}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -886,7 +886,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 1330523852}
         m_TargetAssemblyTypeName: AddressableManager, Assembly-CSharp
-        m_MethodName: CreateObject
+        m_MethodName: GetTextCommand
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}

@@ -7,10 +7,12 @@ using UnityEngine.AddressableAssets;
 using UnityEngine.AddressableAssets.ResourceLocators;
 using UnityEngine.ResourceManagement.AsyncOperations;
 using TMPro;
+using UnityEngine.ResourceManagement.ResourceLocations;
 
-public class AddressableManager : MonoBehaviour
+public partial class AddressableManager : MonoBehaviour
 {
-    private AsyncOperationHandle<IResourceLocator> asyncOperationHandle;
+    //private AsyncOperationHandle<IResourceLocator> asyncOperationHandle;
+    private IResourceLocator resourceLocator;
 
     public TMP_Text msg;
     public TMP_Text log;
@@ -36,60 +38,67 @@ public class AddressableManager : MonoBehaviour
 
     private async void OnAwake()
     {
-        asyncOperationHandle = Addressables.InitializeAsync(false);
-        await asyncOperationHandle.Task;
+        resourceLocator = await Addressables.InitializeAsync(true).Task;
 
         await CheckCatalogUpdate();
-    }
-
-    private async Task CheckCatalogUpdate()
-    {
-        AsyncOperationHandle<List<string>> asyncCatalogCheck = Addressables.CheckForCatalogUpdates(false);
-        await asyncCatalogCheck.Task;
-
-        Log($"Catalog count: {asyncCatalogCheck.Result.Count}");
-
-        if (asyncCatalogCheck.Result.Count > 0)
+        if (catalogForUpdate.Count > 0)
         {
-            Log($"Updating catalog");
-            await UpdateCatalog(asyncCatalogCheck.Result);
+            await UpdateCatalog();
         }
-        else
+        
+        await GetDownloadSize();
+    }
+
+    private async Task GetDownloadSize()
+    {
+        long size = 0;
+
+        foreach (var locator in Addressables.ResourceLocators)
         {
-            Log($"Catalog already up to date!");
+            foreach (var key in locator.Keys)
+            {
+                AsyncOperationHandle<long> asyncDownloadSize = Addressables.GetDownloadSizeAsync(key);
+                await asyncDownloadSize.Task;
+                if (asyncDownloadSize.Result > 0)
+                {
+                    Log($"{key} with download size of {asyncDownloadSize.Result} B");
+                }
+                size += asyncDownloadSize.Result;
+            }
         }
 
-        Addressables.Release(asyncCatalogCheck);
+        Log($"Download size: {size} B");
     }
 
-    private async Task UpdateCatalog(List<string> result)
+    private async Task DownloadDependencies()
     {
-        AsyncOperationHandle asyncUpdate = Addressables.UpdateCatalogs(result, false);
-        //await asyncUpdate.Task;
-
-        while(asyncUpdate.PercentComplete < 1f)
+        foreach(var locator in updatedLocators)
         {
-            Message($"Load {asyncUpdate.PercentComplete*100}%");
-            await Task.Yield();
+            foreach(var key in locator.Keys)
+            {
+                Log($"Attempting to download {key}...");
+                AsyncOperationHandle asyncDownload = Addressables.DownloadDependenciesAsync(key);
+
+                DateTime start = DateTime.Now;
+                while (!asyncDownload.IsDone)
+                {
+                    Message($"Download {key} {asyncDownload.PercentComplete*100}%");
+                    await Task.Yield();
+                }
+                Message($"Download {key} {asyncDownload.PercentComplete * 100}%");
+
+                DateTime finished = DateTime.Now;
+                Log($"Download complete for {key} in {finished - start} seconds");
+            }
         }
-        Message($"Load {asyncUpdate.PercentComplete * 100}%");
-
-        Log($"Catalog update completed!");
-        Addressables.Release(asyncUpdate);
     }
 
-    private void Log(string value)
-    {
-        log.text += $"[{DateTime.Now.ToString("hh:mm:ss:ff")}] {value}\n";
-        Debug.Log($"[{DateTime.Now.ToString("hh:mm:ss:ff")}] {value}\n");
-    }
 
-    private void Message(string value)
-    {
-        msg.text = $"{value}";
-    }
 
-    public async Task InstantiateAsset(string path)
+
+
+
+    public async Task InstantiateAsset(string key)
     {        
         Vector3 randomPosition = new Vector3(
             UnityEngine.Random.Range(-4, 4),
@@ -98,20 +107,25 @@ public class AddressableManager : MonoBehaviour
             );
 
         AsyncOperationHandle<GameObject> asyncInstantiate;
-        asyncInstantiate  = Addressables.InstantiateAsync(path, randomPosition, Quaternion.identity);
-        //await asyncInstantiate.Task;
-        while (asyncInstantiate.PercentComplete < 1f)
-        {
-            Message($"Load {path} {asyncInstantiate.PercentComplete * 100}%");
-            await Task.Yield();
-        }
+        asyncInstantiate  = Addressables.InstantiateAsync(key, randomPosition, Quaternion.identity);
+        await asyncInstantiate.Task;
 
         Log($"{asyncInstantiate.Result.name} instantiated");
     }
 
-    public async void CreateObject()
+    public async void GetTextCommand()
     {
-        await InstantiateAsset(chatBox.text);
+        string input = chatBox.text;
+
+        if (input.Contains("/create "))
+        {
+            input = input.Split("/create ")[1];
+            Log($"{input}");
+            await InstantiateAsset(input);
+        } else if (input.Contains("/update"))
+        {
+            await DownloadDependencies();
+        }
 
         chatBox.text = "";
     }
