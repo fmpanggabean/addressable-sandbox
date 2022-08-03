@@ -39,20 +39,25 @@ public class AddressableManager : MonoBehaviour
         asyncOperationHandle = Addressables.InitializeAsync(false);
         await asyncOperationHandle.Task;
 
-        await CheckCatalogUpdate();
+        List<string> catalogResult = await CheckCatalogUpdate();
+
+        await UpdateCatalog(catalogResult);
+
+        Addressables.Release(asyncOperationHandle);
     }
 
-    private async Task CheckCatalogUpdate()
+    private async Task<List<string>> CheckCatalogUpdate()
     {
+        List<string> catalogResult = new List<string>();
         AsyncOperationHandle<List<string>> asyncCatalogCheck = Addressables.CheckForCatalogUpdates(false);
         await asyncCatalogCheck.Task;
 
-        Log($"Catalog count: {asyncCatalogCheck.Result.Count}");
+        Log($"Catalog update count: {asyncCatalogCheck.Result.Count}");
+        catalogResult.AddRange(asyncCatalogCheck.Result);
 
         if (asyncCatalogCheck.Result.Count > 0)
         {
-            Log($"Updating catalog");
-            await UpdateCatalog(asyncCatalogCheck.Result);
+            Log($"Catalog need an update");
         }
         else
         {
@@ -60,22 +65,31 @@ public class AddressableManager : MonoBehaviour
         }
 
         Addressables.Release(asyncCatalogCheck);
+
+        return catalogResult;
     }
 
     private async Task UpdateCatalog(List<string> result)
     {
-        AsyncOperationHandle asyncUpdate = Addressables.UpdateCatalogs(result, false);
+        AsyncOperationHandle asyncUpdateCatalog = Addressables.UpdateCatalogs(result, false);
         //await asyncUpdate.Task;
 
-        while(asyncUpdate.PercentComplete < 1f)
+        while(!asyncUpdateCatalog.IsDone)
         {
-            Message($"Load {asyncUpdate.PercentComplete*100}%");
+            Message($"Load {asyncUpdateCatalog.PercentComplete*100}%");
             await Task.Yield();
         }
-        Message($"Load {asyncUpdate.PercentComplete * 100}%");
-
-        Log($"Catalog update completed!");
-        Addressables.Release(asyncUpdate);
+        Message($"Load {asyncUpdateCatalog.PercentComplete * 100}%");
+        
+        if (asyncUpdateCatalog.Status == AsyncOperationStatus.Succeeded)
+        {
+            Log($"Catalog update completed!");
+        }
+        else
+        {
+            Log($"Catalog update failed!");
+        }
+        Addressables.Release(asyncUpdateCatalog);
     }
 
     private void Log(string value)
