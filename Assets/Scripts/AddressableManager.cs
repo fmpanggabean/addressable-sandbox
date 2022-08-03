@@ -42,19 +42,28 @@ public class AddressableManager : MonoBehaviour
         
         List<string> catalogResult = await CheckCatalogUpdate();
 
-        //Addressable Main Content Catalog
-        catalogResult.ForEach((value) => Log($"{value}"));
-
         if (catalogResult.Count > 0)
         {
             await UpdateCatalog(catalogResult);
+            await DownloadDependencies(catalogResult);
         }
-        await CheckDownloadSize(catalogResult);
     }
 
-    private async Task CheckDownloadSize(List<string> catalogResult)
+    private async Task DownloadDependencies(List<string> catalogResult)
     {
+        foreach(var key in resourceLocator.Keys)
+        {
+            AsyncOperationHandle asyncDownload = Addressables.DownloadDependenciesAsync(key);
 
+            DateTime start = DateTime.Now;
+            while (!asyncDownload.IsDone)
+            {
+                Message($"Download {key} {asyncDownload.PercentComplete*100}%");
+                await Task.Yield();
+            }
+            DateTime finished = DateTime.Now;
+            Log($"Download complete for {key} in {finished - start} seconds");
+        }
     }
 
     private async Task<List<string>> CheckCatalogUpdate()
