@@ -9,7 +9,7 @@ using UnityEngine.ResourceManagement.AsyncOperations;
 using TMPro;
 using UnityEngine.ResourceManagement.ResourceLocations;
 
-public class AddressableManager : MonoBehaviour
+public partial class AddressableManager : MonoBehaviour
 {
     //private AsyncOperationHandle<IResourceLocator> asyncOperationHandle;
     private IResourceLocator resourceLocator;
@@ -39,93 +39,66 @@ public class AddressableManager : MonoBehaviour
     private async void OnAwake()
     {
         resourceLocator = await Addressables.InitializeAsync(true).Task;
-        
-        List<string> catalogResult = await CheckCatalogUpdate();
 
-        if (catalogResult.Count > 0)
+        await CheckCatalogUpdate();
+        if (catalogForUpdate.Count > 0)
         {
-            await UpdateCatalog(catalogResult);
-            await DownloadDependencies(catalogResult);
+            await UpdateCatalog();
         }
+        
+        await GetDownloadSize();
     }
 
-    private async Task DownloadDependencies(List<string> catalogResult)
+    private async Task GetDownloadSize()
     {
-        foreach(var key in resourceLocator.Keys)
-        {
-            AsyncOperationHandle asyncDownload = Addressables.DownloadDependenciesAsync(key);
+        long size = 0;
 
-            DateTime start = DateTime.Now;
-            while (!asyncDownload.IsDone)
+        foreach (var locator in Addressables.ResourceLocators)
+        {
+            foreach (var key in locator.Keys)
             {
-                Message($"Download {key} {asyncDownload.PercentComplete*100}%");
-                await Task.Yield();
+                AsyncOperationHandle<long> asyncDownloadSize = Addressables.GetDownloadSizeAsync(key);
+                await asyncDownloadSize.Task;
+                if (asyncDownloadSize.Result > 0)
+                {
+                    Log($"{key} with download size of {asyncDownloadSize.Result} B");
+                }
+                size += asyncDownloadSize.Result;
             }
-            Message($"Download {key} {asyncDownload.PercentComplete * 100}%");
-
-            DateTime finished = DateTime.Now;
-            Log($"Download complete for {key} in {finished - start} seconds");
         }
+
+        Log($"Download size: {size} B");
     }
 
-    private async Task<List<string>> CheckCatalogUpdate()
+    private async Task DownloadDependencies()
     {
-        List<string> catalogResult = new List<string>();
-        AsyncOperationHandle<List<string>> asyncCatalogCheck = Addressables.CheckForCatalogUpdates(false);
-        await asyncCatalogCheck.Task;
-
-        Log($"Catalog update count: {asyncCatalogCheck.Result.Count}");
-        catalogResult.AddRange(asyncCatalogCheck.Result);
-
-        if (asyncCatalogCheck.Result.Count > 0)
+        foreach(var locator in updatedLocators)
         {
-            Log($"Catalog need an update");
-        }
-        else
-        {
-            Log($"Catalog already up to date!");
-        }
+            foreach(var key in locator.Keys)
+            {
+                Log($"Attempting to download {key}...");
+                AsyncOperationHandle asyncDownload = Addressables.DownloadDependenciesAsync(key);
 
-        Addressables.Release(asyncCatalogCheck);
+                DateTime start = DateTime.Now;
+                while (!asyncDownload.IsDone)
+                {
+                    Message($"Download {key} {asyncDownload.PercentComplete*100}%");
+                    await Task.Yield();
+                }
+                Message($"Download {key} {asyncDownload.PercentComplete * 100}%");
 
-        return catalogResult;
+                DateTime finished = DateTime.Now;
+                Log($"Download complete for {key} in {finished - start} seconds");
+            }
+        }
     }
 
-    private async Task UpdateCatalog(List<string> result)
-    {
-        AsyncOperationHandle asyncUpdateCatalog = Addressables.UpdateCatalogs(result, false);
-        await asyncUpdateCatalog.Task;
 
-        //while(!asyncUpdateCatalog.IsDone)
-        //{
-        //    Message($"Load {asyncUpdateCatalog.PercentComplete*100}%");
-        //    await Task.Yield();
-        //}
-        //Message($"Load {asyncUpdateCatalog.PercentComplete * 100}%");
-        
-        if (asyncUpdateCatalog.Status == AsyncOperationStatus.Succeeded)
-        {
-            Log($"Catalog update completed!");
-        }
-        else
-        {
-            Log($"Catalog update failed!");
-        }
-        Addressables.Release(asyncUpdateCatalog);
-    }
 
-    private void Log(string value)
-    {
-        log.text += $"[{DateTime.Now.ToString("hh:mm:ss:ff")}] {value}\n";
-        Debug.Log($"[{DateTime.Now.ToString("hh:mm:ss:ff")}] {value}\n");
-    }
 
-    private void Message(string value)
-    {
-        msg.text = $"{value}";
-    }
 
-    public async Task InstantiateAsset(string path)
+
+    public async Task InstantiateAsset(string key)
     {        
         Vector3 randomPosition = new Vector3(
             UnityEngine.Random.Range(-4, 4),
@@ -134,20 +107,25 @@ public class AddressableManager : MonoBehaviour
             );
 
         AsyncOperationHandle<GameObject> asyncInstantiate;
-        asyncInstantiate  = Addressables.InstantiateAsync(path, randomPosition, Quaternion.identity);
+        asyncInstantiate  = Addressables.InstantiateAsync(key, randomPosition, Quaternion.identity);
         await asyncInstantiate.Task;
-        //while (asyncInstantiate.PercentComplete < 1f)
-        //{
-        //    Message($"Load {path} {asyncInstantiate.PercentComplete * 100}%");
-        //    await Task.Yield();
-        //}
 
         Log($"{asyncInstantiate.Result.name} instantiated");
     }
 
-    public async void CreateObject()
+    public async void GetTextCommand()
     {
-        await InstantiateAsset(chatBox.text);
+        string input = chatBox.text;
+
+        if (input.Contains("/create "))
+        {
+            input = input.Split("/create ")[1];
+            Log($"{input}");
+            await InstantiateAsset(input);
+        } else if (input.Contains("/update"))
+        {
+            await DownloadDependencies();
+        }
 
         chatBox.text = "";
     }
