@@ -1,0 +1,47 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bbb281ee3bf0b054c82ac2347e9e782c, type: 3}
+  m_Name: Character Remote
+  m_EditorClassIdentifier: 
+  m_GroupName: Character Remote
+  m_Data:
+    m_SerializedData: []
+  m_GUID: d74382c722ba25a4c97bc2ec8a9f0f68
+  m_SerializeEntries:
+  - m_GUID: fdf678a7193c58346a367114b3da57ac
+    m_Address: Assets/SD Unity-Chan Haon Custom/Prefabs/Set/LS Preview SD Unity-chan.prefab
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: 234a458d2bc9de040834a24c42610268
+    m_Address: Assets/SD Unity-Chan Haon Custom/Prefabs/Set/Set Costume_01 SD Unity-Chan.prefab
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: 0da59bd1f7117f84a8b59d383effdaef
+    m_Address: Assets/SD Unity-Chan Haon Custom/Prefabs/Set/Set Costume_02 SD Misaki.prefab
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: 485d662c63590f74dac20be0cf684019
+    m_Address: Assets/SD Unity-Chan Haon Custom/Prefabs/Set/Set Costume_02 SD Unity-Chan
+      WGS.prefab
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: 9567168e85118da4a9e668d51492efb1
+    m_Address: Assets/SD Unity-Chan Haon Custom/Prefabs/Set/Set Costume_02 SD Unity-Chan
+      WTD.prefab
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  m_ReadOnly: 0
+  m_Settings: {fileID: 11400000, guid: 4b561c325a0cc2b4a983035e86042575, type: 2}
+  m_SchemaSet:
+    m_Schemas:
+    - {fileID: 11400000, guid: 940387c80fcc5e246b11105953de10b0, type: 2}
+    - {fileID: 11400000, guid: cdb48662c6e48554e9a1d946f1b2704f, type: 2}

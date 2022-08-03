@@ -7,10 +7,12 @@ using UnityEngine.AddressableAssets;
 using UnityEngine.AddressableAssets.ResourceLocators;
 using UnityEngine.ResourceManagement.AsyncOperations;
 using TMPro;
+using UnityEngine.ResourceManagement.ResourceLocations;
 
 public class AddressableManager : MonoBehaviour
 {
-    private AsyncOperationHandle<IResourceLocator> asyncOperationHandle;
+    //private AsyncOperationHandle<IResourceLocator> asyncOperationHandle;
+    private IResourceLocator resourceLocator;
 
     public TMP_Text msg;
     public TMP_Text log;
@@ -36,12 +38,19 @@ public class AddressableManager : MonoBehaviour
 
     private async void OnAwake()
     {
-        asyncOperationHandle = Addressables.InitializeAsync(false);
-        await asyncOperationHandle.Task;
-
+        resourceLocator = await Addressables.InitializeAsync(true).Task;
+        
         List<string> catalogResult = await CheckCatalogUpdate();
 
-        await UpdateCatalog(catalogResult);
+        //Addressable Main Content Catalog
+        catalogResult.ForEach((value) => Log($"{value}"));
+
+        if (catalogResult.Count  > 0)
+        {
+            await UpdateCatalog(catalogResult);
+            //await UpdateBundle();
+        }
+    }
 
         Addressables.Release(asyncOperationHandle);
     }
