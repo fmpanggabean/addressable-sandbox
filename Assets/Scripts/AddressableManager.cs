@@ -39,10 +39,10 @@ public class AddressableManager : MonoBehaviour
         asyncOperationHandle = Addressables.InitializeAsync(false);
         await asyncOperationHandle.Task;
 
-        await UpdateCheck();
+        await CheckCatalogUpdate();
     }
 
-    private async Task UpdateCheck()
+    private async Task CheckCatalogUpdate()
     {
         AsyncOperationHandle<List<string>> asyncCatalogCheck = Addressables.CheckForCatalogUpdates(false);
         await asyncCatalogCheck.Task;
