@@ -8,12 +8,16 @@ using UnityEngine.AddressableAssets.ResourceLocators;
 using UnityEngine.ResourceManagement.AsyncOperations;
 using TMPro;
 using UnityEngine.ResourceManagement.ResourceLocations;
+using UnityEngine.SceneManagement;
+using UnityEngine.ResourceManagement.ResourceProviders;
 
 public partial class AddressableManager : MonoBehaviour
 {
-    //private AsyncOperationHandle<IResourceLocator> asyncOperationHandle;
+    public static AddressableManager Instance;
+
     private IResourceLocator resourceLocator;
     private Dictionary<string, AsyncOperationHandle<GameObject>> asyncGameObjectListInstantiated = new Dictionary<string, AsyncOperationHandle<GameObject>>();
+    private Dictionary<string, AsyncOperationHandle<SceneInstance>> asyncSceneDictionary = new Dictionary<string, AsyncOperationHandle<SceneInstance>>();
 
     public TMP_Text msg;
     public TMP_Text log;
@@ -23,6 +27,13 @@ public partial class AddressableManager : MonoBehaviour
 
     private void Awake()
     {
+        if (Instance != null)
+        {
+            Destroy(gameObject);
+        }
+        Instance = this;
+        DontDestroyOnLoad(gameObject);
+
         if (isClearCacheBeforeRun)
         {
             ClearCache();
@@ -60,15 +71,13 @@ public partial class AddressableManager : MonoBehaviour
             {
                 AsyncOperationHandle<long> asyncDownloadSize = Addressables.GetDownloadSizeAsync(key);
                 await asyncDownloadSize.Task;
-                //if (asyncDownloadSize.Result > 0)
-                //{
-                //    Log($"{key} with download size of {asyncDownloadSize.Result} B");
-                //}
                 size += asyncDownloadSize.Result;
             }
         }
-
-        Log($"Download size: {size/1024f} KB. Type update to download additional files.");
+        if (size > 0)
+        {
+            Log($"Download size: {size/1024f} KB. Type update to download additional files.");
+        }
     }
 
     private async Task DownloadDependencies()
@@ -97,7 +106,37 @@ public partial class AddressableManager : MonoBehaviour
 
 
 
+    public async Task LoadScene(string path, LoadSceneMode loadSceneMode)
+    {
+        if (asyncSceneDictionary.ContainsKey(path))
+        {
+            return;
+        }
 
+        var asyncLoadScene = Addressables.LoadSceneAsync(path, loadSceneMode);
+        await asyncLoadScene.Task;
+
+        if (asyncLoadScene.Status == AsyncOperationStatus.Succeeded)
+        {
+            asyncSceneDictionary.Add(path, asyncLoadScene);
+        }
+    }
+
+    public async Task UnloadScene(string path)
+    {
+        if (asyncSceneDictionary.ContainsKey(path))
+        {
+            return;
+        }
+
+        var asyncUnloadScene = Addressables.UnloadSceneAsync(asyncSceneDictionary[path]);
+        await asyncUnloadScene.Task;
+
+        if (asyncUnloadScene.Status == AsyncOperationStatus.Succeeded)
+        {
+            asyncSceneDictionary.Remove(path);
+        }
+    }
 
     public async void InstantiateObjectAtRandom(string key)
     {
@@ -132,25 +171,5 @@ public partial class AddressableManager : MonoBehaviour
         
         Log($"{deletedName} deleted");
 
-    }
-
-    public async void GetTextCommand()
-    {
-        var input = chatBox.text.Split("#");
-
-        if (input[0].Equals("create"))
-        {
-            InstantiateObjectAtRandom(input[1]);
-        } 
-        else if (input[0].Equals("update"))
-        {
-            await DownloadDependencies();
-        } 
-        else if (input[0].Equals("delete"))
-        {
-            RemoveInstantiatedObject(input[1]);
-        }
-
-        chatBox.text = "";
     }
 }
