@@ -13,6 +13,7 @@ public partial class AddressableManager : MonoBehaviour
 {
     //private AsyncOperationHandle<IResourceLocator> asyncOperationHandle;
     private IResourceLocator resourceLocator;
+    private Dictionary<string, AsyncOperationHandle<GameObject>> asyncGameObjectListInstantiated = new Dictionary<string, AsyncOperationHandle<GameObject>>();
 
     public TMP_Text msg;
     public TMP_Text log;
@@ -59,20 +60,20 @@ public partial class AddressableManager : MonoBehaviour
             {
                 AsyncOperationHandle<long> asyncDownloadSize = Addressables.GetDownloadSizeAsync(key);
                 await asyncDownloadSize.Task;
-                if (asyncDownloadSize.Result > 0)
-                {
-                    Log($"{key} with download size of {asyncDownloadSize.Result} B");
-                }
+                //if (asyncDownloadSize.Result > 0)
+                //{
+                //    Log($"{key} with download size of {asyncDownloadSize.Result} B");
+                //}
                 size += asyncDownloadSize.Result;
             }
         }
 
-        Log($"Download size: {size} B");
+        Log($"Download size: {size/1024f} KB. Type /update to download additional files.");
     }
 
     private async Task DownloadDependencies()
     {
-        foreach(var locator in updatedLocators)
+        foreach(var locator in Addressables.ResourceLocators)
         {
             foreach(var key in locator.Keys)
             {
@@ -110,7 +111,24 @@ public partial class AddressableManager : MonoBehaviour
         asyncInstantiate  = Addressables.InstantiateAsync(key, randomPosition, Quaternion.identity);
         await asyncInstantiate.Task;
 
+        asyncGameObjectListInstantiated.Add(key, asyncInstantiate);
+
         Log($"{asyncInstantiate.Result.name} instantiated");
+    }
+
+    public void RemoveInstantiatedObject(string key)
+    {
+        if (asyncGameObjectListInstantiated.ContainsKey(key) == false)
+        {
+            Log($"Delete failed");
+            return;
+        }
+
+        string deletedName = asyncGameObjectListInstantiated[key].Result.name;
+        Addressables.Release(asyncGameObjectListInstantiated[key]);
+        
+        Log($"{deletedName} deleted");
+
     }
 
     public async void GetTextCommand()
@@ -122,9 +140,15 @@ public partial class AddressableManager : MonoBehaviour
             input = input.Split("/create ")[1];
             Log($"{input}");
             await InstantiateAsset(input);
-        } else if (input.Contains("/update"))
+        } 
+        else if (input.Contains("/update"))
         {
             await DownloadDependencies();
+        } 
+        else if (input.Contains("/delete "))
+        {
+            input = input.Split("/delete ")[1];
+            RemoveInstantiatedObject(input);
         }
 
         chatBox.text = "";
