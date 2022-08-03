@@ -45,14 +45,16 @@ public class AddressableManager : MonoBehaviour
         //Addressable Main Content Catalog
         catalogResult.ForEach((value) => Log($"{value}"));
 
-        if (catalogResult.Count  > 0)
+        if (catalogResult.Count > 0)
         {
             await UpdateCatalog(catalogResult);
-            //await UpdateBundle();
         }
+        await CheckDownloadSize(catalogResult);
     }
 
-        Addressables.Release(asyncOperationHandle);
+    private async Task CheckDownloadSize(List<string> catalogResult)
+    {
+
     }
 
     private async Task<List<string>> CheckCatalogUpdate()
