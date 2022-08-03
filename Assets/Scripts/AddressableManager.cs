@@ -61,6 +61,8 @@ public class AddressableManager : MonoBehaviour
                 Message($"Download {key} {asyncDownload.PercentComplete*100}%");
                 await Task.Yield();
             }
+            Message($"Download {key} {asyncDownload.PercentComplete * 100}%");
+
             DateTime finished = DateTime.Now;
             Log($"Download complete for {key} in {finished - start} seconds");
         }
@@ -92,14 +94,14 @@ public class AddressableManager : MonoBehaviour
     private async Task UpdateCatalog(List<string> result)
     {
         AsyncOperationHandle asyncUpdateCatalog = Addressables.UpdateCatalogs(result, false);
-        //await asyncUpdate.Task;
+        await asyncUpdateCatalog.Task;
 
-        while(!asyncUpdateCatalog.IsDone)
-        {
-            Message($"Load {asyncUpdateCatalog.PercentComplete*100}%");
-            await Task.Yield();
-        }
-        Message($"Load {asyncUpdateCatalog.PercentComplete * 100}%");
+        //while(!asyncUpdateCatalog.IsDone)
+        //{
+        //    Message($"Load {asyncUpdateCatalog.PercentComplete*100}%");
+        //    await Task.Yield();
+        //}
+        //Message($"Load {asyncUpdateCatalog.PercentComplete * 100}%");
         
         if (asyncUpdateCatalog.Status == AsyncOperationStatus.Succeeded)
         {
@@ -133,12 +135,12 @@ public class AddressableManager : MonoBehaviour
 
         AsyncOperationHandle<GameObject> asyncInstantiate;
         asyncInstantiate  = Addressables.InstantiateAsync(path, randomPosition, Quaternion.identity);
-        //await asyncInstantiate.Task;
-        while (asyncInstantiate.PercentComplete < 1f)
-        {
-            Message($"Load {path} {asyncInstantiate.PercentComplete * 100}%");
-            await Task.Yield();
-        }
+        await asyncInstantiate.Task;
+        //while (asyncInstantiate.PercentComplete < 1f)
+        //{
+        //    Message($"Load {path} {asyncInstantiate.PercentComplete * 100}%");
+        //    await Task.Yield();
+        //}
 
         Log($"{asyncInstantiate.Result.name} instantiated");
     }
