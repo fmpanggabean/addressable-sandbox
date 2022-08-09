@@ -1,23 +1,14 @@
-using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using TMPro;
 using UnityEngine;
 using UnityEngine.AddressableAssets;
-using UnityEngine.AddressableAssets.ResourceLocators;
 using UnityEngine.ResourceManagement.AsyncOperations;
-using TMPro;
 using UnityEngine.ResourceManagement.ResourceLocations;
-using UnityEngine.SceneManagement;
-using UnityEngine.ResourceManagement.ResourceProviders;
 
 public partial class AddressableManager : MonoBehaviour
 {
     public static AddressableManager Instance;
-
-    private IResourceLocator resourceLocator;
-    private Dictionary<string, AsyncOperationHandle<GameObject>> asyncGameObjectListInstantiated = new Dictionary<string, AsyncOperationHandle<GameObject>>();
-    private Dictionary<string, AsyncOperationHandle<SceneInstance>> asyncSceneDictionary = new Dictionary<string, AsyncOperationHandle<SceneInstance>>();
 
     public TMP_Text msg;
     public TMP_Text log;
@@ -50,126 +41,142 @@ public partial class AddressableManager : MonoBehaviour
 
     private async void OnAwake()
     {
-        resourceLocator = await Addressables.InitializeAsync(true).Task;
+        Caching.ClearCache();
+        await IntializeAddressables();
+        var catalog = await CatalogUpdateCheck();
+        await CatalogUpdate(catalog);
 
-        await CheckCatalogUpdate();
-        if (catalogForUpdate.Count > 0)
-        {
-            await UpdateCatalog();
-        }
-        
-        await GetDownloadSize();
+        List<string> keys = await RetrievePrimaryKey();
+        long size = await GetDownloadSize(keys);
+        await DownloadAssets(keys);
     }
 
-    private async Task GetDownloadSize()
+    private async Task DownloadAssets(List<string> keys)
     {
-        long size = 0;
+        var downloadHandle = Addressables.DownloadDependenciesAsync(keys, Addressables.MergeMode.Union, false);
+        
+        while (!downloadHandle.IsDone)
+        {
+            Log($"Download: {downloadHandle.GetDownloadStatus().Percent * 100}%");
+            await Task.Yield();
+        }
+        Log($"Downloaded: {(downloadHandle.GetDownloadStatus().DownloadedBytes/1024).ToString("G")} KB");
+
+        Release(downloadHandle);
+    }
+
+    private async Task<long> GetDownloadSize(List<string> keys)
+    {
+        Dictionary<string, long> downloadList = new Dictionary<string, long>();
+
+        var downloadSizeHandle = Addressables.GetDownloadSizeAsync(keys);
+        await downloadSizeHandle.Task;
+
+        long size = downloadSizeHandle.Result;
+        Log($"Download size: {size/1024} KB");
+        Release(downloadSizeHandle);
+
+        //foreach(var key in keys)
+        //{
+        //    var downloadSizeHandle = Addressables.GetDownloadSizeAsync(key);
+        //    await downloadSizeHandle.Task;
+        //    long size = downloadSizeHandle.Result;
+
+        //    if (size > 0)
+        //    {
+        //        downloadList.Add(key, size);
+        //        Log($"Key: {key}, Size: {size}");
+        //    }
+
+        //    Release(downloadSizeHandle);
+        //}
+
+        return size;
+    }
+
+    private async Task<List<string>> RetrievePrimaryKey()
+    {
+        List<string> keys = new List<string>();
 
         foreach (var locator in Addressables.ResourceLocators)
         {
+            //Log($"Locator: {locator.LocatorId}");
+
             foreach (var key in locator.Keys)
             {
-                AsyncOperationHandle<long> asyncDownloadSize = Addressables.GetDownloadSizeAsync(key);
-                await asyncDownloadSize.Task;
-                size += asyncDownloadSize.Result;
-            }
-        }
-        if (size > 0)
-        {
-            Log($"Download size: {size/1024f} KB. Type update to download additional files.");
-        }
-    }
+                //Log($"Key: {key.ToString()}");
 
-    private async Task DownloadDependencies()
-    {
-        foreach(var locator in Addressables.ResourceLocators)
-        {
-            foreach(var key in locator.Keys)
-            {
-                Log($"Attempting to download {key}...");
-                AsyncOperationHandle asyncDownload = Addressables.DownloadDependenciesAsync(key);
+                IList<IResourceLocation> resourceLocations;
+                locator.Locate(key, null, out resourceLocations);
 
-                DateTime start = DateTime.Now;
-                while (!asyncDownload.IsDone)
+                foreach (var location in resourceLocations)
                 {
-                    Message($"Download {key} {asyncDownload.PercentComplete*100}%");
-                    await Task.Yield();
-                }
-                Message($"Download {key} {asyncDownload.PercentComplete * 100}%");
+                    string primary = location.PrimaryKey;
 
-                DateTime finished = DateTime.Now;
-                Log($"Download complete for {key} in {finished - start} seconds");
+                    if (keys.Contains(primary))
+                    {
+                        break;
+                    }
+
+                    keys.Add(primary);
+                }
             }
         }
+
+        return keys;
     }
 
-
-
-
-    public async Task LoadScene(string path, LoadSceneMode loadSceneMode)
+    private async Task CatalogUpdate(List<string> list)
     {
-        if (asyncSceneDictionary.ContainsKey(path))
+        if (list.Count == 0)
         {
+            Log($"Catalog need no update");
             return;
         }
 
-        var asyncLoadScene = Addressables.LoadSceneAsync(path, loadSceneMode);
-        await asyncLoadScene.Task;
+        var catalogUpdateHandle = Addressables.UpdateCatalogs(list, false);
+        await catalogUpdateHandle.Task;
 
-        if (asyncLoadScene.Status == AsyncOperationStatus.Succeeded)
+        if (catalogUpdateHandle.Status != AsyncOperationStatus.Succeeded)
         {
-            asyncSceneDictionary.Add(path, asyncLoadScene);
+            Log($"Catalog update failed");
         }
+        else
+        {
+            Log($"Catalog update success");
+        }
+
+        Release(catalogUpdateHandle);
     }
 
-    public async Task UnloadScene(string path)
+    private async Task<List<string>> CatalogUpdateCheck()
     {
-        if (asyncSceneDictionary.ContainsKey(path))
+        List<string> catalogUpdate = new List<string>();
+        var catalogUpdateCheckHandle = Addressables.CheckForCatalogUpdates(false);
+        await catalogUpdateCheckHandle.Task;
+
+
+        if (catalogUpdateCheckHandle.Status != AsyncOperationStatus.Succeeded)
         {
-            return;
+            Log($"Catalog update check failed");
+        }
+        else
+        {
+            Log($"Catalog update check success");
+            catalogUpdate.AddRange(catalogUpdateCheckHandle.Result);
         }
 
-        var asyncUnloadScene = Addressables.UnloadSceneAsync(asyncSceneDictionary[path]);
-        await asyncUnloadScene.Task;
-
-        if (asyncUnloadScene.Status == AsyncOperationStatus.Succeeded)
-        {
-            asyncSceneDictionary.Remove(path);
-        }
+        Release(catalogUpdateCheckHandle);
+        return catalogUpdate;
     }
 
-    public async void InstantiateObjectAtRandom(string key)
+    private async Task IntializeAddressables()
     {
-        Vector3 randomPosition = new Vector3(
-            UnityEngine.Random.Range(-4, 4),
-            0,
-            UnityEngine.Random.Range(-4, 4)
-            );
-
-        await InstantiateAsset(key, randomPosition, Quaternion.identity);
-    }
-    public async Task InstantiateAsset(string key, Vector3 position, Quaternion rotation)
-    { 
-        AsyncOperationHandle<GameObject> asyncInstantiate = Addressables.InstantiateAsync(key, position, rotation);
-        await asyncInstantiate.Task;
-
-        asyncGameObjectListInstantiated.Add(key, asyncInstantiate);
-
-        Log($"{asyncInstantiate.Result.name} instantiated");
+        await Addressables.InitializeAsync(true).Task;
     }
 
-    public void RemoveInstantiatedObject(string key)
+    private void Release(AsyncOperationHandle value)
     {
-        if (asyncGameObjectListInstantiated.ContainsKey(key) == false)
-        {
-            Log($"Delete failed");
-            return;
-        }
-
-        string deletedName = asyncGameObjectListInstantiated[key].Result.name;
-        Addressables.Release(asyncGameObjectListInstantiated[key]);
-        
-        Log($"{deletedName} deleted");
-
+        Addressables.Release(value);
     }
 }
