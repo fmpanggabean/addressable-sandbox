@@ -194,6 +194,7 @@ public static class ResourceManager
         {
             return;
         }
+
         var loadSceneHandle = Addressables.LoadSceneAsync(path, mode);
 
         while (!loadSceneHandle.IsDone)

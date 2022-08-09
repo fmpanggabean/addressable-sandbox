@@ -1,10 +1,12 @@
 using System;
 using UnityEngine;
 using UnityEngine.UI;
+using TMPro;
 
 public class AddressablesImplementation : MonoBehaviour
 {
     public Slider loadingBar;
+    public TMP_InputField inputField;
 
     public bool isClearCacheBeforeRun;
 
@@ -14,28 +16,6 @@ public class AddressablesImplementation : MonoBehaviour
         ResourceManager.DownloadCompleted += OnDownloadCompleted;
 
         OnAwake();
-    }
-
-    private void Update()
-    {
-        OnUpdate();
-    }
-
-    private async void OnUpdate()
-    {
-        if (Input.GetKeyDown(KeyCode.Alpha1))
-        {
-            Debug.Log("1");
-        }
-        else if (Input.GetKeyDown(KeyCode.Alpha2))
-        {
-        }
-        else if (Input.GetKeyDown(KeyCode.Alpha3))
-        {
-        }
-        else if (Input.GetKeyDown(KeyCode.Alpha4))
-        {
-        }
     }
 
     private async void OnAwake()
@@ -53,13 +33,8 @@ public class AddressablesImplementation : MonoBehaviour
         Debug.Log($"Download size: {(size/1024).ToString("N2")}KB");
         if (size > 0)
         {
-            await ResourceManager.DownloadAssets();
+            //await ResourceManager.DownloadAssets();
         }
-
-        //await ResourceManager.InstantiateUniqueObject("Set/Set Costume_02 SD Unity-Chan WTD.prefab");
-        //ResourceManager.ReleaseInstantiatedUniqueObject("Set/Set Costume_02 SD Unity-Chan WTD.prefab");
-        await ResourceManager.LoadScene("Premade Scene", UnityEngine.SceneManagement.LoadSceneMode.Additive);
-        await ResourceManager.UnloadScene("Premade Scene");
     }
 
     private void UpdateProgressbar(float progress)
@@ -70,5 +45,25 @@ public class AddressablesImplementation : MonoBehaviour
     private void OnDownloadCompleted()
     {
         Debug.Log($"Download completed");
+    }
+
+    public async void SendCommand()
+    {
+        var command = inputField.text.Split(" ", 2);
+
+        if (command[0].Equals("/update"))
+        {
+            await ResourceManager.DownloadAssets();
+        }
+        else if(command[0].Equals("/instantiate"))
+        {
+            await ResourceManager.InstantiateUniqueObject(command[1]);
+        }
+        else if (command[0].Equals("/release"))
+        {
+            ResourceManager.ReleaseInstantiatedUniqueObject(command[1]);
+        }
+
+        inputField.text = "";
     }
 }
