@@ -18,7 +18,7 @@ MonoBehaviour:
   m_GUID: 3fb1473c90fb21e44b4167f897d5b4f2
   m_SerializeEntries:
   - m_GUID: 1ef2be772404687439368e04a088acd7
-    m_Address: Assets/Scenes/Premade Scene.unity
+    m_Address: Premade Scene
     m_ReadOnly: 0
     m_SerializedLabels: []
   m_ReadOnly: 0

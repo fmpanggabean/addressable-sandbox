@@ -1,0 +1,89 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bbb281ee3bf0b054c82ac2347e9e782c, type: 3}
+  m_Name: Duplicate Asset Isolation
+  m_EditorClassIdentifier: 
+  m_GroupName: Duplicate Asset Isolation
+  m_Data:
+    m_SerializedData: []
+  m_GUID: dfae6ff99554ded46bdb533da3bf6c84
+  m_SerializeEntries:
+  - m_GUID: 08f6634017a8e784a8807f193b72bec9
+    m_Address: Assets/FreeDragons/Animators/DragonBoarCTRL.controller
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: 5c658df0d8d544b4c860c0ad70993a2a
+    m_Address: Assets/FreeDragons/Mesh/DragonBoarMesh.fbx
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: 47ea938179c096840b80ea73fa8d50e7
+    m_Address: Assets/FreeDragons/Materials/DragonBoarPBR/BluePBR.mat
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: e6ddf820ae074db43ba98cea8d65f3d1
+    m_Address: Assets/FreeDragons/Texture/DragonBoarPBR/AO.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: 5f9b47d1228458148ac9b6e86d151862
+    m_Address: Assets/FreeDragons/Animations/DragonBoar/run.fbx
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: 2bcf21f129797c541a2ce3587bf59eed
+    m_Address: Assets/FreeDragons/Animations/DragonBoar/idle.fbx
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: e30ffe326b27d924aaac44272b4e9aa7
+    m_Address: Assets/FreeDragons/Animations/DragonBoar/Die.fbx
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: 034398a226edc3c41aebbf4e5407ee76
+    m_Address: Assets/FreeDragons/Texture/DragonBoarPBR/Blue/Albedo.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: bf993fd33a2eef14a942f7262c135a59
+    m_Address: Assets/FreeDragons/Texture/DragonBoarPBR/Blue/Metallic.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: 3fd80404506c6734282c368b3d3b36f0
+    m_Address: Assets/FreeDragons/Animations/DragonBoar/attack.fbx
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: 3496cda763ff70b40aeed94cf510c9db
+    m_Address: Assets/FreeDragons/Animations/DragonBoar/HornAttack.fbx
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: 131e870b83920764e869069cf8c977e9
+    m_Address: Assets/FreeDragons/Animations/DragonBoar/Scream.fbx
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: b26800cb6cdf6224081095f4f4636a2f
+    m_Address: Assets/FreeDragons/Texture/DragonBoarPBR/Blue/Normal.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: 1aff7b4c5d1ad334e9736911d3fa9a8f
+    m_Address: Assets/FreeDragons/Texture/DragonBoarPBR/Emission.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: b4c53a0d61354f943a98448f95b52c30
+    m_Address: Assets/FreeDragons/Animations/DragonBoar/GetHit.fbx
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: 4c7a0e0d6f7821c439d739697a6bbee0
+    m_Address: Assets/FreeDragons/Animations/DragonBoar/walk.fbx
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  m_ReadOnly: 0
+  m_Settings: {fileID: 11400000, guid: 4b561c325a0cc2b4a983035e86042575, type: 2}
+  m_SchemaSet:
+    m_Schemas:
+    - {fileID: 11400000, guid: 341fdcab7575ad347895718289f154a5, type: 2}
+    - {fileID: 11400000, guid: 59852a1dd52529e4db83fb9ee1c390f3, type: 2}
