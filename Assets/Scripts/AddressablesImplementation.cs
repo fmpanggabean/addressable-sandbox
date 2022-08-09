@@ -55,13 +55,21 @@ public class AddressablesImplementation : MonoBehaviour
         {
             await ResourceManager.DownloadAssets();
         }
-        else if(command[0].Equals("/instantiate"))
+        else if (command[0].Equals("/instantiate"))
         {
             await ResourceManager.InstantiateUniqueObject(command[1]);
         }
         else if (command[0].Equals("/release"))
         {
             ResourceManager.ReleaseInstantiatedUniqueObject(command[1]);
+        }
+        else if (command[0].Equals("/loadScene"))
+        {
+            await ResourceManager.LoadScene(command[1], UnityEngine.SceneManagement.LoadSceneMode.Additive);
+        }
+        else if (command[0].Equals("/unloadScene"))
+        {
+            await ResourceManager.UnloadScene(command[1]);
         }
 
         inputField.text = "";
