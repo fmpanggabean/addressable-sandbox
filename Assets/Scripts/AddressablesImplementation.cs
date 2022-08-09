@@ -33,6 +33,8 @@ public class AddressablesImplementation : MonoBehaviour
         {
             await ResourceManager.DownloadAssets();
         }
+
+        await ResourceManager.InstantiateObject("DragonSoulEaterPBR/DragonSoulEaterBluePBR.prefab");
     }
 
     private void UpdateProgressbar(float progress)

@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using UnityEngine;
 using UnityEngine.AddressableAssets;
 using UnityEngine.ResourceManagement.AsyncOperations;
 using UnityEngine.ResourceManagement.ResourceLocations;
@@ -28,7 +27,7 @@ public static class ResourceManager
     {
         List<string> catalogUpdate = new List<string>();
         var catalogUpdateCheckHandle = Addressables.CheckForCatalogUpdates(false);
-        await catalogUpdateCheckHandle.Task;
+        catalogUpdateCheckHandle.WaitForCompletion();
 
 
         if (catalogUpdateCheckHandle.Status != AsyncOperationStatus.Succeeded)
@@ -53,7 +52,7 @@ public static class ResourceManager
         }
 
         var catalogUpdateHandle = Addressables.UpdateCatalogs(updatedCatalog, false);
-        await catalogUpdateHandle.Task;
+        catalogUpdateHandle.WaitForCompletion();
 
         if (catalogUpdateHandle.Status != AsyncOperationStatus.Succeeded)
         {
@@ -99,7 +98,8 @@ public static class ResourceManager
         RetrievePrimaryKey();
 
         var downloadSizeHandle = Addressables.GetDownloadSizeAsync(primaryKeys);
-        await downloadSizeHandle.Task;
+        //await downloadSizeHandle.Task;
+        downloadSizeHandle.WaitForCompletion();
 
         long sizeInBytes = downloadSizeHandle.Result;
 
@@ -118,7 +118,13 @@ public static class ResourceManager
             await Task.Yield();
         }
         DownloadCompleted?.Invoke();
-
+        
         Release(downloadHandle);
+    }
+
+
+    internal static async Task InstantiateObject(string v)
+    {
+        await Addressables.InstantiateAsync(v).Task;
     }
 }

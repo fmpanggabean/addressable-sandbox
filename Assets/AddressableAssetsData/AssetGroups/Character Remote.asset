@@ -16,19 +16,7 @@ MonoBehaviour:
   m_Data:
     m_SerializedData: []
   m_GUID: d74382c722ba25a4c97bc2ec8a9f0f68
-  m_SerializeEntries:
-  - m_GUID: 7add1d5b90ab7234d92b5feb2d77c953
-    m_Address: GreenBoarPBR
-    m_ReadOnly: 0
-    m_SerializedLabels: []
-  - m_GUID: 907325ec940ecbf409d1505976f5fcd5
-    m_Address: BlueBoarPBR
-    m_ReadOnly: 0
-    m_SerializedLabels: []
-  - m_GUID: 36dd14b7ef773c54e96eb7d110c8b5ce
-    m_Address: GoldBoarPBR
-    m_ReadOnly: 0
-    m_SerializedLabels: []
+  m_SerializeEntries: []
   m_ReadOnly: 0
   m_Settings: {fileID: 11400000, guid: 4b561c325a0cc2b4a983035e86042575, type: 2}
   m_SchemaSet:
