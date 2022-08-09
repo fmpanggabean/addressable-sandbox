@@ -34,7 +34,9 @@ public class AddressablesImplementation : MonoBehaviour
             await ResourceManager.DownloadAssets();
         }
 
-        await ResourceManager.InstantiateObject("DragonSoulEaterPBR/DragonSoulEaterBluePBR.prefab");
+        await ResourceManager.InstantiateUniqueObject("Set/Set Costume_02 SD Unity-Chan WTD.prefab");
+        await ResourceManager.InstantiateUniqueObject("Set/Set Costume_03 SD Misaki.prefab");
+        ResourceManager.ReleaseInstantiatedUniqueObject("Set/Set Costume_02 SD Unity-Chan WTD.prefab");
     }
 
     private void UpdateProgressbar(float progress)
