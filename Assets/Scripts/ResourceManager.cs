@@ -190,14 +190,17 @@ public static class ResourceManager
 
     public static async Task LoadScene(string path, LoadSceneMode mode)
     {
+        if (loadedScene.ContainsKey(path))
+        {
+            return;
+        }
         var loadSceneHandle = Addressables.LoadSceneAsync(path, mode);
 
         while (!loadSceneHandle.IsDone)
         {
             SceneLoadProgress?.Invoke(loadSceneHandle.PercentComplete);
             await Task.Yield();
-        }
-        
+        } 
         loadedScene.Add(path, loadSceneHandle);
     }
 
@@ -208,7 +211,6 @@ public static class ResourceManager
             var unloadSceneHandle = Addressables.UnloadSceneAsync(loadedScene[path]);
             await unloadSceneHandle.Task;
 
-            Release(loadedScene[path]);
             loadedScene.Remove(path);
         }
     }

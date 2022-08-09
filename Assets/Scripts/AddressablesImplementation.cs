@@ -16,6 +16,28 @@ public class AddressablesImplementation : MonoBehaviour
         OnAwake();
     }
 
+    private void Update()
+    {
+        OnUpdate();
+    }
+
+    private async void OnUpdate()
+    {
+        if (Input.GetKeyDown(KeyCode.Alpha1))
+        {
+            Debug.Log("1");
+        }
+        else if (Input.GetKeyDown(KeyCode.Alpha2))
+        {
+        }
+        else if (Input.GetKeyDown(KeyCode.Alpha3))
+        {
+        }
+        else if (Input.GetKeyDown(KeyCode.Alpha4))
+        {
+        }
+    }
+
     private async void OnAwake()
     {
         if (isClearCacheBeforeRun)
@@ -34,9 +56,10 @@ public class AddressablesImplementation : MonoBehaviour
             await ResourceManager.DownloadAssets();
         }
 
-        await ResourceManager.InstantiateUniqueObject("Set/Set Costume_02 SD Unity-Chan WTD.prefab");
-        await ResourceManager.InstantiateUniqueObject("Set/Set Costume_03 SD Misaki.prefab");
-        ResourceManager.ReleaseInstantiatedUniqueObject("Set/Set Costume_02 SD Unity-Chan WTD.prefab");
+        //await ResourceManager.InstantiateUniqueObject("Set/Set Costume_02 SD Unity-Chan WTD.prefab");
+        //ResourceManager.ReleaseInstantiatedUniqueObject("Set/Set Costume_02 SD Unity-Chan WTD.prefab");
+        await ResourceManager.LoadScene("Premade Scene", UnityEngine.SceneManagement.LoadSceneMode.Additive);
+        await ResourceManager.UnloadScene("Premade Scene");
     }
 
     private void UpdateProgressbar(float progress)
